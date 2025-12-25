@@ -366,3 +366,21 @@ input[type=number] {
     color: var(--success-color);
     font-weight: 600;
 }
+
+/* Feedback Message */
+.feedback-message {
+    height: 32px;
+    margin-top: 20px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.feedback-message.correct {
+    color: var(--success-color);
+}
+
+.feedback-message.wrong {
+    color: var(--error-color);
+}

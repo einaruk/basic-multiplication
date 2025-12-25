@@ -100,7 +100,11 @@ class MathGame {
 
     startGame() {
         // Get Settings
-        const count = parseInt(this.elements.inputs.questionCount.value);
+        let count = parseInt(this.elements.inputs.questionCount.value);
+        if (isNaN(count) || count < 1) {
+            count = 50; // default override
+            this.elements.inputs.questionCount.value = 50;
+        }
         const selectedOps = Array.from(this.elements.inputs.operations)
             .filter(cb => cb.checked)
             .map(cb => cb.value);
@@ -231,6 +235,10 @@ class MathGame {
         this.elements.inputs.answer.value = '';
         this.elements.inputs.answer.focus();
 
+        // Clear feedback
+        this.elements.display.feedback.textContent = '';
+        this.elements.display.feedback.style.opacity = '0';
+
         // Start Timer
         this.state.questionStartTime = performance.now();
     }
@@ -273,20 +281,32 @@ class MathGame {
         if (isCorrect) {
             this.state.score++;
             this.showFeedback(true);
+            setTimeout(() => {
+                this.showNextQuestion();
+            }, 500);
         } else {
-            this.showFeedback(false);
+            this.showFeedback(false, correctAnswer);
+            // Longer delay for wrong answers to read the feedback
+            setTimeout(() => {
+                this.showNextQuestion();
+            }, 2000);
         }
-
-        this.state.currentQuestionIndex++;
-
-        // Small delay to show feedback before next question
-        setTimeout(() => {
-            this.showNextQuestion();
-        }, 300);
     }
 
-    showFeedback(isCorrect) {
-        // Visual feedback could be added here
+    showFeedback(isCorrect, correctAnswer = null) {
+        const feedbackEl = this.elements.display.feedback;
+        feedbackEl.style.opacity = '1';
+
+        if (isCorrect) {
+            feedbackEl.textContent = 'Doğru!';
+            feedbackEl.className = 'feedback-message correct';
+        } else {
+            feedbackEl.textContent = `Yanlış! Doğru cevap: ${correctAnswer}`;
+            feedbackEl.className = 'feedback-message wrong';
+        }
+
+        // Hide feedback when moving to next (handled by showNextQuestion resetting UI or just fade out)
+        // actually showNextQuestion doesn't clear feedback, let's clear it there or timeout here
     }
 
     endGame() {
