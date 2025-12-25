@@ -392,7 +392,11 @@ class MathGame {
         const subject = encodeURIComponent('Matematik Alıştırması Sonuçları');
         const mailtoLink = `mailto:?subject=${subject}&body=${encodeURIComponent(body)}`;
 
-        window.location.href = mailtoLink;
+        // Give feedback to user
+        const confirmed = confirm('Rapor hazırlandı. E-posta uygulamanız açılsın mı?');
+        if (confirmed) {
+            window.location.href = mailtoLink;
+        }
     }
 }
 
