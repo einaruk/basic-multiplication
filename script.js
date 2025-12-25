@@ -278,6 +278,8 @@ class MathGame {
             isCorrect
         });
 
+        this.state.currentQuestionIndex++;
+
         if (isCorrect) {
             this.state.score++;
             this.showFeedback(true);
