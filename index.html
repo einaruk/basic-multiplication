@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matematik Alıştırması</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Start Screen -->
+        <div id="start-screen" class="screen active">
+            <div class="header-top">
+                <h1>Matematik Alıştırması</h1>
+                <button id="theme-toggle" class="icon-btn" aria-label="Karanlık Mod">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="moon-icon">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="sun-icon hidden">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+            <p>Çarpım tablosu ve dört işlem yeteneklerini geliştir.</p>
+
+            <div class="settings-grid">
+                <div class="config-group">
+                    <label for="question-count">Soru Sayısı</label>
+                    <div class="select-wrapper">
+                        <select id="question-count">
+                            <option value="50">50 Soru</option>
+                            <option value="100">100 Soru</option>
+                            <option value="150">150 Soru</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="config-group">
+                    <label>İşlemler</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="operation" value="+" checked> Toplama (+)
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="operation" value="-" checked> Çıkarma (-)
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="operation" value="*" checked> Çarpma (×)
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="operation" value="/" checked> Bölme (÷)
+                        </label>
+                    </div>
+                </div>
+
+                <div class="config-group">
+                    <label>Sayı Aralığı (Operand 1)</label>
+                    <div class="range-inputs">
+                        <input type="number" id="op1-min" value="0" placeholder="Min">
+                        <span>-</span>
+                        <input type="number" id="op1-max" value="9" placeholder="Max">
+                    </div>
+                </div>
+
+                <div class="config-group">
+                    <label>Sayı Aralığı (Operand 2)</label>
+                    <div class="range-inputs">
+                        <input type="number" id="op2-min" value="0" placeholder="Min">
+                        <span>-</span>
+                        <input type="number" id="op2-max" value="9" placeholder="Max">
+                    </div>
+                </div>
+            </div>
+
+            <button id="start-btn" class="primary-btn">Başla</button>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="screen hidden">
+            <div class="progress-bar">
+                <div id="progress-fill"></div>
+            </div>
+            <div class="header-info">
+                <span id="question-counter">Soru 1/10</span>
+            </div>
+
+            <div class="question-container">
+                <span id="factor1">3</span>
+                <span class="operator">×</span>
+                <span id="factor2">4</span>
+                <span class="equals">=</span>
+                <input type="number" id="answer-input" autocomplete="off" inputmode="numeric">
+            </div>
+
+            <div class="feedback-message" id="feedback"></div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="result-screen" class="screen hidden">
+            <h2>Sonuçlar</h2>
+
+            <div class="stats-container">
+                <div class="stat-card">
+                    <span class="stat-value" id="avg-time">0.0s</span>
+                    <span class="stat-label">Ortalama Süre</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="score-text">10/10</span>
+                    <span class="stat-label">Doğru</span>
+                </div>
+            </div>
+
+            <div id="wrong-answers-section" class="hidden">
+                <h3>Hatalı Cevaplar</h3>
+                <div class="wrong-answers-list" id="wrong-answers-list">
+                    <!-- Items will be added here -->
+                </div>
+            </div>
+
+            <button id="restart-btn" class="primary-btn">Tekrar Dene</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
