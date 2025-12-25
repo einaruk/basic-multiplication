@@ -129,10 +129,14 @@
             </div>
 
             <button id="restart-btn" class="primary-btn">Tekrar Dene</button>
-            <button id="share-toggle-btn" class="secondary-btn">Sonuçları Gönder</button>
+            <button id="share-toggle-btn" class="secondary-btn">Form ile Gönder (Netlify)</button>
+            <button id="share-mailto-btn" class="secondary-btn" style="border-color: #6B7280; color: #6B7280;">Yerel
+                E-posta İstemcisi ile Paylaş</button>
 
             <div id="share-form-container" class="hidden" style="margin-top: 20px; text-align: left;">
-                <form name="quiz-result" method="POST" data-netlify="true">
+                <div id="form-feedback" class="hidden"
+                    style="padding: 10px; margin-bottom: 10px; border-radius: 8px; font-weight: bold;"></div>
+                <form id="netlify-form" name="quiz-result" method="POST" data-netlify="true">
                     <div class="config-group">
                         <label for="parent-email">Veli E-posta</label>
                         <input type="email" name="email" id="parent-email" placeholder="ornek@email.com" required>

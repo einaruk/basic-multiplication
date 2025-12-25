@@ -46,9 +46,11 @@ class MathGame {
             buttons: {
                 start: document.getElementById('start-btn'),
                 restart: document.getElementById('restart-btn'),
-                restart: document.getElementById('restart-btn'),
                 shareToggle: document.getElementById('share-toggle-btn'),
+                shareMailto: document.getElementById('share-mailto-btn'),
                 shareFormContainer: document.getElementById('share-form-container'),
+                netlifyForm: document.getElementById('netlify-form'),
+                formFeedback: document.getElementById('form-feedback'),
                 reportMessage: document.getElementById('report-message'),
                 themeToggle: document.getElementById('theme-toggle')
             }
@@ -60,9 +62,9 @@ class MathGame {
     init() {
         this.elements.buttons.start.addEventListener('click', () => this.startGame());
         this.elements.buttons.restart.addEventListener('click', () => this.resetGame());
-        this.elements.buttons.start.addEventListener('click', () => this.startGame());
-        this.elements.buttons.restart.addEventListener('click', () => this.resetGame());
         this.elements.buttons.shareToggle.addEventListener('click', () => this.showShareForm());
+        this.elements.buttons.shareMailto.addEventListener('click', () => this.shareViaMailto());
+        this.elements.buttons.netlifyForm.addEventListener('submit', (e) => this.handleFormSubmit(e));
         this.elements.buttons.themeToggle.addEventListener('click', () => this.toggleTheme());
 
         this.elements.inputs.answer.addEventListener('keydown', (e) => {
@@ -155,12 +157,6 @@ class MathGame {
 
             if (op === '/') {
                 // Division: Result should be integer. n1 = n2 * result.
-                // We generate n2 (divisor) and result (quotient).
-                // n2 from op2 range. result from op1 range (conceptually n1 is the dividend, but usually we limit the result size or the dividend size).
-                // Let's stick to: n2 from op2 range. n1 from op1 range.
-                // But n1 must be divisible by n2.
-                // Strategy: Generate n2. Generate result. n1 = n2 * result. Check if n1 is in op1 range.
-
                 let valid = false;
                 let attempts = 0;
                 while (!valid && attempts < 100) {
@@ -372,15 +368,7 @@ class MathGame {
         }, 10);
     }
 
-    showShareForm() {
-        // Toggle Form Visibility
-        const formContainer = this.elements.buttons.shareFormContainer;
-        if (!formContainer.classList.contains('hidden')) {
-            formContainer.classList.add('hidden');
-            return;
-        }
-
-        // Generate Report
+    generateReportBody() {
         const correctAnswers = this.state.results.filter(r => r.isCorrect);
         const total = this.state.totalQuestions;
         const score = correctAnswers.length;
@@ -402,6 +390,25 @@ class MathGame {
         } else {
             body += `Tebrikler! Hata yapılmadı. 🎉\n`;
         }
+        return body;
+    }
+
+    showShareForm() {
+        // Toggle Form Visibility
+        const formContainer = this.elements.buttons.shareFormContainer;
+        const feedbackEl = this.elements.buttons.formFeedback;
+
+        if (!formContainer.classList.contains('hidden')) {
+            formContainer.classList.add('hidden');
+            return;
+        }
+
+        // Hide previous feedback
+        feedbackEl.classList.add('hidden');
+        feedbackEl.textContent = '';
+
+        // Generate Report
+        const body = this.generateReportBody();
 
         // Populate Textarea and Show Form
         this.elements.buttons.reportMessage.value = body;
@@ -409,6 +416,56 @@ class MathGame {
 
         // Scroll to form
         formContainer.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    shareViaMailto() {
+        const body = this.generateReportBody();
+        const subject = encodeURIComponent('Matematik Alıştırması Sonuçları');
+        const mailtoLink = `mailto:?subject=${subject}&body=${encodeURIComponent(body)}`;
+
+        const confirmed = confirm('Rapor hazırlandı. Cihazınızdaki e-posta uygulaması açılsın mı?');
+        if (confirmed) {
+            window.location.href = mailtoLink;
+        }
+    }
+
+    handleFormSubmit(e) {
+        e.preventDefault();
+        const form = e.target;
+        const feedbackEl = this.elements.buttons.formFeedback;
+        const submitBtn = form.querySelector('button[type="submit"]');
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Gönderiliyor...';
+
+        const formData = new FormData(form);
+
+        fetch('/', {
+            method: 'POST',
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams(formData).toString()
+        })
+            .then(() => {
+                feedbackEl.textContent = 'Rapor başarıyla gönderildi! ✅';
+                feedbackEl.style.backgroundColor = '#d1fae5'; // light green
+                feedbackEl.style.color = '#065f46';
+                feedbackEl.classList.remove('hidden');
+                form.reset();
+                setTimeout(() => {
+                    this.elements.buttons.shareFormContainer.classList.add('hidden');
+                }, 3000);
+            })
+            .catch((error) => {
+                console.error(error);
+                feedbackEl.textContent = 'Gönderim sırasında bir hata oluştu. ❌';
+                feedbackEl.style.backgroundColor = '#fee2e2'; // light red
+                feedbackEl.style.color = '#991b1b';
+                feedbackEl.classList.remove('hidden');
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Raporu Gönder';
+            });
     }
 }
 
