@@ -384,3 +384,25 @@ input[type=number] {
 .feedback-message.wrong {
     color: var(--error-color);
 }
+
+.secondary-btn {
+    width: 100%;
+    padding: 16px;
+    background-color: transparent;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    margin-top: 12px;
+}
+
+.secondary-btn:hover {
+    background-color: rgba(79, 70, 229, 0.1);
+}
+
+.secondary-btn:active {
+    transform: scale(0.98);
+}

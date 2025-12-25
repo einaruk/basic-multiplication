@@ -46,6 +46,7 @@ class MathGame {
             buttons: {
                 start: document.getElementById('start-btn'),
                 restart: document.getElementById('restart-btn'),
+                share: document.getElementById('share-btn'),
                 themeToggle: document.getElementById('theme-toggle')
             }
         };
@@ -56,6 +57,7 @@ class MathGame {
     init() {
         this.elements.buttons.start.addEventListener('click', () => this.startGame());
         this.elements.buttons.restart.addEventListener('click', () => this.resetGame());
+        this.elements.buttons.share.addEventListener('click', () => this.shareResults());
         this.elements.buttons.themeToggle.addEventListener('click', () => this.toggleTheme());
 
         this.elements.inputs.answer.addEventListener('keydown', (e) => {
@@ -362,6 +364,35 @@ class MathGame {
         setTimeout(() => {
             target.classList.add('active');
         }, 10);
+    }
+
+    shareResults() {
+        const correctAnswers = this.state.results.filter(r => r.isCorrect);
+        const total = this.state.totalQuestions;
+        const score = correctAnswers.length;
+        const totalTime = correctAnswers.reduce((sum, r) => sum + r.time, 0);
+        const avgTime = correctAnswers.length > 0 ? (totalTime / correctAnswers.length).toFixed(1) : '0.0';
+
+        let body = `Matematik Alıştırması Sonuç Raporu\n\n`;
+        body += `Tarih: ${new Date().toLocaleDateString('tr-TR')} ${new Date().toLocaleTimeString('tr-TR')}\n`;
+        body += `Toplam Soru: ${total}\n`;
+        body += `Doğru Sayısı: ${score}\n`;
+        body += `Ortalama Süre: ${avgTime} saniye\n\n`;
+
+        const wrongAnswers = this.state.results.filter(r => !r.isCorrect);
+        if (wrongAnswers.length > 0) {
+            body += `Hatalı Cevaplar (${wrongAnswers.length}):\n`;
+            wrongAnswers.forEach(r => {
+                body += `${r.question} = ${r.correctAnswer} (Cevap: ${r.userAnswer})\n`;
+            });
+        } else {
+            body += `Tebrikler! Hata yapılmadı. 🎉\n`;
+        }
+
+        const subject = encodeURIComponent('Matematik Alıştırması Sonuçları');
+        const mailtoLink = `mailto:?subject=${subject}&body=${encodeURIComponent(body)}`;
+
+        window.location.href = mailtoLink;
     }
 }
 
