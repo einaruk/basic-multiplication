@@ -439,7 +439,6 @@ class MathGame {
         submitBtn.textContent = 'Gönderiliyor...';
 
         const formData = new FormData(form);
-        formData.append('form-name', 'quiz-result');
 
         fetch('/', {
             method: 'POST',
