@@ -129,7 +129,24 @@
             </div>
 
             <button id="restart-btn" class="primary-btn">Tekrar Dene</button>
-            <button id="share-btn" class="secondary-btn">Sonuçları Paylaş</button>
+            <button id="share-toggle-btn" class="secondary-btn">Sonuçları Gönder</button>
+
+            <div id="share-form-container" class="hidden" style="margin-top: 20px; text-align: left;">
+                <form name="quiz-result" method="POST" data-netlify="true">
+                    <div class="config-group">
+                        <label for="parent-email">Veli E-posta</label>
+                        <input type="email" name="email" id="parent-email" placeholder="ornek@email.com" required>
+                    </div>
+
+                    <div class="config-group" style="margin-top: 15px;">
+                        <label for="report-message">Rapor</label>
+                        <textarea name="message" id="report-message" rows="6"
+                            style="width: 100%; padding: 10px; border-radius: 12px; border: 2px solid var(--border-color); font-family: inherit; background: var(--input-bg); color: var(--text-main);"></textarea>
+                    </div>
+
+                    <button type="submit" class="primary-btn" style="margin-top: 15px;">Raporu Gönder</button>
+                </form>
+            </div>
         </div>
     </div>
 

@@ -46,7 +46,10 @@ class MathGame {
             buttons: {
                 start: document.getElementById('start-btn'),
                 restart: document.getElementById('restart-btn'),
-                share: document.getElementById('share-btn'),
+                restart: document.getElementById('restart-btn'),
+                shareToggle: document.getElementById('share-toggle-btn'),
+                shareFormContainer: document.getElementById('share-form-container'),
+                reportMessage: document.getElementById('report-message'),
                 themeToggle: document.getElementById('theme-toggle')
             }
         };
@@ -57,7 +60,9 @@ class MathGame {
     init() {
         this.elements.buttons.start.addEventListener('click', () => this.startGame());
         this.elements.buttons.restart.addEventListener('click', () => this.resetGame());
-        this.elements.buttons.share.addEventListener('click', () => this.shareResults());
+        this.elements.buttons.start.addEventListener('click', () => this.startGame());
+        this.elements.buttons.restart.addEventListener('click', () => this.resetGame());
+        this.elements.buttons.shareToggle.addEventListener('click', () => this.showShareForm());
         this.elements.buttons.themeToggle.addEventListener('click', () => this.toggleTheme());
 
         this.elements.inputs.answer.addEventListener('keydown', (e) => {
@@ -345,6 +350,7 @@ class MathGame {
             this.elements.display.wrongAnswersSection.classList.add('hidden');
         }
 
+        this.elements.buttons.shareFormContainer.classList.add('hidden'); // Ensure form is hidden on restart
         this.switchScreen('result');
     }
 
@@ -366,14 +372,22 @@ class MathGame {
         }, 10);
     }
 
-    shareResults() {
+    showShareForm() {
+        // Toggle Form Visibility
+        const formContainer = this.elements.buttons.shareFormContainer;
+        if (!formContainer.classList.contains('hidden')) {
+            formContainer.classList.add('hidden');
+            return;
+        }
+
+        // Generate Report
         const correctAnswers = this.state.results.filter(r => r.isCorrect);
         const total = this.state.totalQuestions;
         const score = correctAnswers.length;
         const totalTime = correctAnswers.reduce((sum, r) => sum + r.time, 0);
         const avgTime = correctAnswers.length > 0 ? (totalTime / correctAnswers.length).toFixed(1) : '0.0';
 
-        let body = `Matematik Alıştırması Sonuç Raporu\n\n`;
+        let body = `Matematik Alıştırması Sonuç Raporu\n`;
         body += `Tarih: ${new Date().toLocaleDateString('tr-TR')} ${new Date().toLocaleTimeString('tr-TR')}\n`;
         body += `Toplam Soru: ${total}\n`;
         body += `Doğru Sayısı: ${score}\n`;
@@ -389,14 +403,12 @@ class MathGame {
             body += `Tebrikler! Hata yapılmadı. 🎉\n`;
         }
 
-        const subject = encodeURIComponent('Matematik Alıştırması Sonuçları');
-        const mailtoLink = `mailto:?subject=${subject}&body=${encodeURIComponent(body)}`;
+        // Populate Textarea and Show Form
+        this.elements.buttons.reportMessage.value = body;
+        formContainer.classList.remove('hidden');
 
-        // Give feedback to user
-        const confirmed = confirm('Rapor hazırlandı. E-posta uygulamanız açılsın mı?');
-        if (confirmed) {
-            window.location.href = mailtoLink;
-        }
+        // Scroll to form
+        formContainer.scrollIntoView({ behavior: 'smooth' });
     }
 }
 
